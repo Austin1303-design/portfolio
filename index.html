@@ -36,6 +36,26 @@
   .nav-cta{background:var(--accent);color:#fff;padding:0.45rem 1.1rem;border-radius:100px;font-size:0.82rem;font-weight:600;text-decoration:none;letter-spacing:0.02em;transition:opacity 0.2s}
   .nav-cta:hover{opacity:0.85}
 
+  .menu-toggle {
+    display: none;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 20px;
+    height: 14px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    z-index: 110;
+    padding: 0;
+  }
+  .menu-toggle span {
+    width: 100%;
+    height: 2px;
+    background-color: var(--text);
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    border-radius: 2px;
+  }
+
   /* SECTIONS */
   section{padding:6rem 2rem}
   .container{max-width:1100px;margin:0 auto}
@@ -181,8 +201,62 @@
     .hero-visual{display:none}
     .project-card{grid-template-columns:1fr}
     .edu-card{grid-template-columns:1fr}
-    nav{padding:0 1rem}
-    .nav-links{display:none}
+    nav{padding:0 1.5rem}
+    
+    .menu-toggle {
+      display: flex;
+    }
+    
+    .menu-toggle.active span:nth-child(1) {
+      transform: translateY(6px) rotate(45deg);
+    }
+    .menu-toggle.active span:nth-child(2) {
+      opacity: 0;
+    }
+    .menu-toggle.active span:nth-child(3) {
+      transform: translateY(-6px) rotate(-45deg);
+    }
+
+    .nav-links {
+      position: fixed;
+      top: 60px;
+      left: 0;
+      right: 0;
+      background: rgba(10,10,15,0.96);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      flex-direction: column;
+      gap: 0;
+      padding: 1rem 0;
+      align-items: center;
+      display: flex;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(-10px);
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    
+    .nav-links.active {
+      opacity: 1;
+      pointer-events: all;
+      transform: translateY(0);
+    }
+    
+    .nav-links li {
+      width: 100%;
+      text-align: center;
+    }
+    
+    .nav-links a {
+      display: block;
+      padding: 1rem;
+      font-size: 0.95rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.02);
+    }
+    
+    .nav-links li:last-child a {
+      border-bottom: none;
+    }
   }
 </style>
 </head>
@@ -198,7 +272,14 @@
       <li><a href="#certifications">Certs</a></li>
       <li><a href="#education">Education</a></li>
     </ul>
-    <a href="#contact" class="nav-cta">Hire Me</a>
+    <div style="display:flex;align-items:center;gap:1rem">
+      <a href="#contact" class="nav-cta">Hire Me</a>
+      <button class="menu-toggle" aria-label="Toggle Navigation">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
   </div>
 </nav>
 
@@ -519,10 +600,10 @@
             </div>
             <div class="contact-link-arrow">→</div>
           </a>
-          <a href="https://behance.net/Austin1303-design" target="_blank" class="contact-link">
-            <div class="contact-link-icon ic-coral">🎨</div>
+          <a href="https://github.com/Austin1303-design" target="_blank" class="contact-link">
+            <div class="contact-link-icon ic-coral">🐙</div>
             <div class="contact-link-text">
-              <div class="contact-link-label">Design Portfolio</div>
+              <div class="contact-link-label">GitHub</div>
               <div class="contact-link-val">Austin1303-design</div>
             </div>
             <div class="contact-link-arrow">→</div>
@@ -562,12 +643,34 @@
 </footer>
 
 <script>
+  // Smooth scroll
   document.querySelectorAll('a[href^="#"]').forEach(a=>{
     a.addEventListener('click',e=>{
       const t=document.querySelector(a.getAttribute('href'));
       if(t){e.preventDefault();t.scrollIntoView({behavior:'smooth'})}
     })
   });
+
+  // Mobile menu toggle
+  const menuToggle = document.querySelector('.menu-toggle');
+  const navLinks = document.querySelector('.nav-links');
+  
+  if (menuToggle && navLinks) {
+    menuToggle.addEventListener('click', () => {
+      menuToggle.classList.toggle('active');
+      navLinks.classList.toggle('active');
+    });
+    
+    // Close mobile menu when a link is clicked
+    navLinks.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => {
+        menuToggle.classList.remove('active');
+        navLinks.classList.remove('active');
+      });
+    });
+  }
+
+  // Intersection observer for section fade-in
   const obs=new IntersectionObserver(entries=>{
     entries.forEach(e=>{if(e.isIntersecting)e.target.style.opacity='1'})
   },{threshold:0.1});
